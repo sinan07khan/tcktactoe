@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Next-Gen Glassmorphic Tic-Tac-Toe: Pass & Play, Unbeatable Minimax AI, and Real-Time Online Multiplayer with WebSocket room sync.">
+  <meta name="theme-color" content="#0a0a14">
+  <title>CYBER TAC-TOE // Next-Gen Glassmorphic Duel</title>
+
+  <!-- Google Fonts: Outfit & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Dynamic Multi-Layer Animated Mesh Background -->
+  <div class="mesh-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Confetti Canvas for Victory Celebration -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="app-header glass-card">
+      <div class="brand">
+        <div class="brand-icon">
+          <span class="neon-x">X</span>
+          <span class="neon-o">O</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="logo-title">CYBER<span>TAC-TOE</span></h1>
+          <span class="sub-badge" id="app-version">v2.5 // ULTRA</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Sound Effect Toggle -->
+        <button id="btn-sound-toggle" class="icon-btn glass-pill" title="Toggle Sound (Mute/Unmute)" aria-label="Toggle Sound">
+          <svg id="icon-sound-on" class="svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="icon-sound-off" class="svg-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+
+        <!-- Mode Indicator / Back to Menu button -->
+        <button id="btn-home" class="glass-pill action-pill hidden">
+          <svg class="svg-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>Menu</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="main-content">
+      <!-- 1. LANDING & MODE SELECT VIEW -->
+      <section id="view-menu" class="view-panel active">
+        <div class="hero-card glass-panel">
+          <div class="hero-badge">AESTHETIC MULTIPLAYER ARENA</div>
+          <h2 class="hero-heading">Select Your Battle Ground</h2>
+          <p class="hero-desc">Choose between local couch play, our deep Minimax AI, or invite friends worldwide via instant private room links.</p>
+
+          <div class="mode-grid">
+            <!-- Mode 1: Local Pass & Play -->
+            <button id="btn-mode-local" class="mode-card glass-tile">
+              <div class="mode-icon-box cyan-glow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+              <div class="mode-info">
+                <h3>Pass & Play</h3>
+                <p>2 Players on the same physical device</p>
+              </div>
+              <div class="mode-tag">Offline</div>
+            </button>
+
+            <!-- Mode 2: Vs Minimax AI -->
+            <button id="btn-mode-ai" class="mode-card glass-tile">
+              <div class="mode-icon-box purple-glow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                  <circle cx="12" cy="5" r="2"></circle>
+                  <path d="M12 7v4"></path>
+                  <line x1="8" y1="16" x2="8" y2="16"></line>
+                  <line x1="16" y1="16" x2="16" y2="16"></line>
+                </svg>
+              </div>
+              <div class="mode-info">
+                <h3>Minimax AI</h3>
+                <p>Calculated algorithmic opponent</p>
+              </div>
+              <div class="mode-tag tag-purple">Smart AI</div>
+            </button>
+
+            <!-- Mode 3: Online Realtime Multiplayer -->
+            <button id="btn-mode-online" class="mode-card glass-tile">
+              <div class="mode-icon-box gold-glow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="2" y1="12" x2="22" y2="12"></line>
+                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+              </div>
+              <div class="mode-info">
+                <h3>Online Duel</h3>
+                <p>Private room codes & instant sync</p>
+              </div>
+              <div class="mode-tag tag-cyan">Live WS</div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. AI CONFIGURATION VIEW -->
+      <section id="view-ai-setup" class="view-panel hidden">
+        <div class="setup-card glass-panel">
+          <div class="panel-header">
+            <button id="btn-back-from-ai" class="icon-pill-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2>AI Difficulty Setup</h2>
+          </div>
+
+          <div class="difficulty-selector">
+            <label class="diff-option glass-tile">
+              <input type="radio" name="ai-diff" value="easy">
+              <div class="diff-content">
+                <span class="diff-title">Easy (Novice)</span>
+                <span class="diff-desc">AI makes playful random moves</span>
+              </div>
+            </label>
+            <label class="diff-option glass-tile">
+              <input type="radio" name="ai-diff" value="medium" checked>
+              <div class="diff-content">
+                <span class="diff-title">Medium (Balanced)</span>
+                <span class="diff-desc">Smart strategy with occasional openings</span>
+              </div>
+            </label>
+            <label class="diff-option glass-tile">
+              <input type="radio" name="ai-diff" value="hard">
+              <div class="diff-content">
+                <span class="diff-title">Unbeatable (Master Minimax)</span>
+                <span class="diff-desc">Flawless game theory calculations</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="symbol-selector">
+            <label class="label-heading">Your Symbol:</label>
+            <div class="symbol-toggle-group">
+              <button type="button" id="ai-choose-x" class="symbol-btn active" data-symbol="X">
+                <span class="neon-x">X</span> (First)
+              </button>
+              <button type="button" id="ai-choose-o" class="symbol-btn" data-symbol="O">
+                <span class="neon-o">O</span> (Second)
+              </button>
+            </div>
+          </div>
+
+          <button id="btn-start-ai-match" class="glow-button btn-primary">
+            <span>Enter The Arena</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. ONLINE LOBBY VIEW (Create / Join) -->
+      <section id="view-online-lobby" class="view-panel hidden">
+        <div class="lobby-card glass-panel">
+          <div class="panel-header">
+            <button id="btn-back-from-lobby" class="icon-pill-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2>Online Multiplayer Hub</h2>
+          </div>
+
+          <div class="lobby-columns">
+            <!-- Host Room Card -->
+            <div class="lobby-box glass-tile">
+              <div class="box-tag">HOST DUEL</div>
+              <h3>Create Room</h3>
+              <p>Spin up a dedicated match session and share the invite code.</p>
+              <button id="btn-create-room" class="glow-button btn-cyan">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Generate Room Code</span>
+              </button>
+            </div>
+
+            <!-- Join Room Card -->
+            <div class="lobby-box glass-tile">
+              <div class="box-tag">GUEST DUEL</div>
+              <h3>Join Room</h3>
+              <p>Enter an active 6-character room code to connect.</p>
+              <div class="join-input-group">
+                <input type="text" id="input-room-code" placeholder="ENTER CODE" maxlength="6" autocomplete="off" spellcheck="false">
+                <button id="btn-join-room" class="glow-button btn-purple">
+                  <span>Connect</span>
+                </button>
+              </div>
+              <div id="join-error-msg" class="inline-error hidden"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. ROOM WAITING SCREEN (HOST WAITING FOR GUEST) -->
+      <section id="view-room-waiting" class="view-panel hidden">
+        <div class="waiting-card glass-panel">
+          <div class="pulse-ring">
+            <div class="radar-scan"></div>
+            <div class="pulse-core">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+          </div>
+
+          <h2>Waiting for Challenger</h2>
+          <p class="waiting-subtext">Share this room code with your opponent or copy the direct duel link.</p>
+
+          <div class="room-code-display glass-tile">
+            <span class="code-label">ROOM CODE:</span>
+            <span id="display-room-code" class="code-text">------</span>
+            <button id="btn-copy-code" class="copy-pill-btn" title="Copy Room Code">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>Copy Code</span>
+            </button>
+          </div>
+
+          <div class="share-actions">
+            <button id="btn-copy-link" class="glow-button btn-outline">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              <span>Copy Direct Duel Link</span>
+            </button>
+            <button id="btn-cancel-room" class="ghost-btn">Cancel Duel</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. ACTIVE GAME ARENA VIEW -->
+      <section id="view-game-arena" class="view-panel hidden">
+        <!-- Match Status Banner -->
+        <div class="arena-top-bar glass-card">
+          <div class="player-card player-x glass-pill" id="badge-player-x">
+            <div class="player-symbol neon-x">X</div>
+            <div class="player-meta">
+              <span class="player-title" id="name-player-x">Player 1</span>
+              <span class="player-score" id="score-player-x">0</span>
+            </div>
+          </div>
+
+          <div class="turn-indicator-pill glass-pill" id="turn-pill">
+            <div class="status-dot pulsating"></div>
+            <span id="turn-status-text">TURN: X</span>
+          </div>
+
+          <div class="player-card player-o glass-pill" id="badge-player-o">
+            <div class="player-meta">
+              <span class="player-title" id="name-player-o">Player 2</span>
+              <span class="player-score" id="score-player-o">0</span>
+            </div>
+            <div class="player-symbol neon-o">O</div>
+          </div>
+        </div>
+
+        <!-- Secondary Info & Control Ribbon -->
+        <div class="arena-ribbon">
+          <div class="game-mode-badge glass-pill" id="game-mode-label">
+            <span class="mode-bullet"></span>
+            <span id="arena-mode-name">LOCAL 2P</span>
+          </div>
+          <div class="ties-badge glass-pill">
+            <span>DRAWS: <strong id="score-ties">0</strong></span>
+          </div>
+          <div class="arena-controls">
+            <button id="btn-quick-reset" class="icon-pill-btn" title="Restart Board">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+            </button>
+            <button id="btn-leave-arena" class="icon-pill-btn" title="Leave Match">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- THE 3X3 INTERACTIVE GLASS ARENA -->
+        <div class="board-wrapper">
+          <div class="game-board glass-panel" id="tictactoe-board">
+            <!-- 9 Tiles with Data Indices -->
+            <button class="board-tile glass-tile" data-cell-index="0" aria-label="Cell 0"></button>
+            <button class="board-tile glass-tile" data-cell-index="1" aria-label="Cell 1"></button>
+            <button class="board-tile glass-tile" data-cell-index="2" aria-label="Cell 2"></button>
+            <button class="board-tile glass-tile" data-cell-index="3" aria-label="Cell 3"></button>
+            <button class="board-tile glass-tile" data-cell-index="4" aria-label="Cell 4"></button>
+            <button class="board-tile glass-tile" data-cell-index="5" aria-label="Cell 5"></button>
+            <button class="board-tile glass-tile" data-cell-index="6" aria-label="Cell 6"></button>
+            <button class="board-tile glass-tile" data-cell-index="7" aria-label="Cell 7"></button>
+            <button class="board-tile glass-tile" data-cell-index="8" aria-label="Cell 8"></button>
+
+            <!-- Winning Neon Strike Line Canvas/Overlay -->
+            <div id="strike-line" class="strike-line hidden"></div>
+          </div>
+        </div>
+
+        <!-- Connection / In-game Toast Alerts -->
+        <div id="arena-toast" class="arena-toast hidden">
+          <span id="toast-message">Message</span>
+        </div>
+      </section>
+    </main>
+
+    <!-- 6. VICTORY / DRAW MODAL OVERLAY -->
+    <div id="game-over-modal" class="modal-backdrop hidden">
+      <div class="modal-card glass-panel">
+        <div class="modal-glow-bg"></div>
+        <div id="modal-crown" class="modal-crown">👑</div>
+        <h3 id="modal-title" class="modal-heading">VICTORY ACHIEVED!</h3>
+        <p id="modal-subtitle" class="modal-subtext">Player X has dominated the grid.</p>
+
+        <div class="modal-actions">
+          <button id="btn-modal-rematch" class="glow-button btn-primary">
+            <span>Play Again</span>
+          </button>
+          <button id="btn-modal-menu" class="ghost-btn">
+            <span>Exit to Menu</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Toast Bar -->
+    <div id="system-toast" class="system-toast hidden">
+      <span id="sys-toast-text">Alert</span>
+    </div>
+  </div>
+
+  <!-- Audio synthesizers & Web Audio Engine embedded in app.js -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
